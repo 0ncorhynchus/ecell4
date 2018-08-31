@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
+#include <ecell4/core/get_mapper_mf.hpp>
 #include <ecell4/core/LatticeSpaceCellListImpl.hpp>
 #include <ecell4/core/LatticeSpaceVectorImpl.hpp>
 #include <ecell4/core/OffLatticeSpace.hpp>
@@ -29,9 +30,10 @@ namespace spatiocyte
 
 struct MoleculeInfo
 {
-    const Real radius;
-    const Real D;
-    const std::string loc;
+    Real radius;
+    Real D;
+    std::string loc;
+    Shape::dimension_kind dimension;
 };
 
 class SpatiocyteWorld
@@ -596,59 +598,91 @@ public:
      * SpatiocyteWorld API
      */
 
+protected:
+
+    template<typename T>
+    inline T
+    get_attribute_as(const Species& sp, const std::string& name, const T& default_value) const
+    {
+        if (sp.has_attribute(name))
+            return sp.get_attribute_as<T>(name);
+        return default_value;
+    }
+
+    inline Shape::dimension_kind
+    get_dimension_kind(const Species& sp) const
+    {
+        const std::string name("dimension");
+
+        if (!sp.has_attribute(name))
+            return Shape::THREE;
+
+        switch (sp.get_attribute_as<Integer>(name))
+        {
+            case 1:
+                return Shape::ONE;
+            case 2:
+                return Shape::TWO;
+            case 3:
+                return Shape::THREE;
+            default:
+                return Shape::UNDEF;
+        }
+    }
+
+    inline MoleculeInfo
+    get_molecule_info_from_species(const Species& sp)
+    {
+        const Real radius = get_attribute_as<Real>(sp, "radius", voxel_radius());
+        const Real D      = get_attribute_as<Real>(sp, "D",      0.0);
+
+        if (sp.has_attribute("location"))
+        {
+            const std::string location(sp.get_attribute_as<std::string>("location"));
+            if (location != "")
+            {
+                const MoleculeInfo info = {
+                    radius,
+                    D,
+                    location,
+                    get_molecule_info(Species(location)).dimension
+                };
+                return info;
+            }
+        }
+
+        const MoleculeInfo info = {
+            radius,
+            D,
+            "",
+            get_dimension_kind(sp)
+        };
+        return info;
+    }
+
+public:
+
     /**
      * draw attributes of species and return it as a molecule info.
      * @param sp a species
      * @return info a molecule info
      */
-    MoleculeInfo get_molecule_info(const Species& sp) const
+    MoleculeInfo get_molecule_info(const Species& sp)
     {
-        const bool with_D(sp.has_attribute("D"));
-        const bool with_radius(sp.has_attribute("radius"));
-        const bool with_loc(sp.has_attribute("location"));
+        minfo_map_type::const_iterator itr(minfo_map_.find(sp));
+        if (itr != minfo_map_.end())
+            return itr->second;
 
-        Real radius(voxel_radius()), D(0.0);
-        std::string loc("");
-
-        if (with_D)
+        if (boost::shared_ptr<Model> model = lock_model())
         {
-            D = sp.get_attribute_as<Real>("D");
+            const Species newsp(model->apply_species_attributes(sp));
+            const MoleculeInfo info(get_molecule_info_from_species(newsp));
+            minfo_map_.insert(std::make_pair(sp, info));
+            return info;
         }
 
-        if (with_radius)
-        {
-            radius = sp.get_attribute_as<Real>("radius");
-        }
-
-        if (with_loc)
-        {
-            loc = sp.get_attribute_as<std::string>("location");
-        }
-
-        if (!(with_D && with_radius))  //XXX: with_loc?
-        {
-            if (boost::shared_ptr<Model> bound_model = lock_model())
-            {
-                Species newsp(bound_model->apply_species_attributes(sp));
-
-                if (!with_D && newsp.has_attribute("D"))
-                {
-                    D = newsp.get_attribute_as<Real>("D");
-                }
-
-                if (!with_radius && newsp.has_attribute("radius"))
-                {
-                    radius = newsp.get_attribute_as<Real>("radius");
-                }
-
-                if (!with_loc && newsp.has_attribute("location"))
-                {
-                    loc = newsp.get_attribute_as<std::string>("location");
-                }
-            }
-        }
-
-        MoleculeInfo info = {radius, D, loc};
+        const MoleculeInfo info(get_molecule_info_from_species(sp));
+        minfo_map_.insert(std::make_pair(sp, info));
         return info;
     }
 
@@ -781,12 +815,6 @@ public:
         return rng_;
     }
 
-    const MoleculeInfo get_molecule_info(boost::shared_ptr<const VoxelPool> mt) const
-    {
-        const MoleculeInfo info = {mt->radius(), mt->D(), get_location_serial(mt)};
-        return info;
-    }
-
     void bind_to(boost::shared_ptr<Model> model)
     {
         if (boost::shared_ptr<Model> bound_model = lock_model())
@@ -864,6 +892,8 @@ public:
 
 protected:
 
+    typedef utils::get_mapper_mf<Species, MoleculeInfo>::type minfo_map_type;
+
     std::size_t size_;
     space_container_type spaces_;
 
@@ -874,6 +904,8 @@ protected:
     SerialIDGenerator<ParticleID> sidgen_;
 
     boost::weak_ptr<Model> model_;
+    minfo_map_type minfo_map_;
+
 };
 
 inline
