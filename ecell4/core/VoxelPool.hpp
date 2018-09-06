@@ -112,15 +112,15 @@ public:
         return voxel_type() == VACANT;
     }
 
-    bool is_structure() const
-    {
-        return voxel_type() == STRUCTURE;
-    }
+    // bool is_structure() const
+    // {
+    //     return voxel_type() == STRUCTURE;
+    // }
 
-    bool is_interface() const
-    {
-        return voxel_type() == INTERFACE;
-    }
+    // bool is_interface() const
+    // {
+    //     return voxel_type() == INTERFACE;
+    // }
 
     const Species& species() const
     {

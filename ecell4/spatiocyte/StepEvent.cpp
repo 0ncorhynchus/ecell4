@@ -184,7 +184,7 @@ void StepEvent::attempt_reaction_(
         return;
     }
 
-    const Real factor(calculate_dimensional_factor(from_mt, to_mt, world_));
+    const Real factor(calculate_dimensional_factor(speciesA, speciesB, world_));
     const Real rnd(world_->rng()->uniform(0,1));
     Real accp(0.0);
 

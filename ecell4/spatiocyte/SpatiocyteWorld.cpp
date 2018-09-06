@@ -122,7 +122,7 @@ std::vector<Species> SpatiocyteWorld::list_non_structure_species() const
     for (std::vector<Species>::const_iterator itr(species.begin());
             itr != species.end(); ++itr)
     {
-        if (!find_voxel_pool(*itr)->is_structure())
+        if (!minfo_map_.find(*itr)->second.is_structure)
             retval.push_back(*itr);
     }
     return retval;
@@ -135,7 +135,7 @@ std::vector<Species> SpatiocyteWorld::list_structure_species() const
     for (std::vector<Species>::const_iterator itr(species.begin());
             itr != species.end(); ++itr)
     {
-        if (find_voxel_pool(*itr)->is_structure())
+        if (minfo_map_.find(*itr)->second.is_structure)
             retval.push_back(*itr);
     }
     return retval;

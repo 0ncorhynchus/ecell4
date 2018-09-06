@@ -36,7 +36,7 @@ make_product(boost::shared_ptr<SpatiocyteWorld> world,
              const Species& species,
              const Voxel voxel)
 {
-    if (world->has_species(species) && world->find_voxel_pool(species)->is_structure())
+    if (world->get_molecule_info(species).is_structure)
     {
         if (boost::optional<ParticleID> new_pid = world->new_voxel_structure(species, voxel))
         {

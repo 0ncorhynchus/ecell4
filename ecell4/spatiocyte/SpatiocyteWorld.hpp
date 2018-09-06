@@ -355,7 +355,7 @@ public:
         for (space_container_type::const_iterator itr(spaces_.begin());
              itr != spaces_.end(); ++itr)
         {
-            if ((*itr)->has_species(sp) && (*itr)->find_molecule_pool(sp)->is_structure())
+            if ((*itr)->has_species(sp))
                 return (*itr)->get_volume(sp);
         }
         return 0.0;
