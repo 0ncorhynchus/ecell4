@@ -8,7 +8,6 @@
 #include <boost/optional.hpp>
 
 #include "Shape.hpp"
-// #include "Space.hpp"
 #include "Integer3.hpp"
 #include "get_mapper_mf.hpp"
 #include "Context.hpp"
@@ -64,10 +63,6 @@ public:
      */
     VoxelSpaceBase(const Real& voxel_radius) :
         t_(0.0), voxel_radius_(voxel_radius), vacant_(VacantType::allocate())
-    {}
-
-    VoxelSpaceBase(const Real& voxel_radius, const Shape::dimension_kind& dimension) :
-        t_(0.0), voxel_radius_(voxel_radius), vacant_(VacantType::allocate(dimension))
     {}
 
     virtual ~VoxelSpaceBase() {}
@@ -364,7 +359,7 @@ public:
     make_molecular_type(const Species& sp, Real radius, Real D, const std::string loc);
 
     bool
-    make_structure_type(const Species& sp, Shape::dimension_kind dimension, const std::string loc);
+    make_structure_type(const Species& sp, const std::string loc);
 
 protected:
 
