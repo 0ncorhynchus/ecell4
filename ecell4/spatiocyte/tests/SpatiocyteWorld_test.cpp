@@ -51,6 +51,7 @@ BOOST_AUTO_TEST_CASE(ModelTest)
     BOOST_CHECK_EQUAL(minfoA.D, 0.0);
     BOOST_CHECK_EQUAL(minfoA.loc, "");
     BOOST_CHECK_EQUAL(minfoA.dimension, Shape::THREE);
+    BOOST_CHECK(!minfoA.is_structure);
 
     model->add_species_attribute(Species("B", "2.5e-9", "1e-12"));
     MoleculeInfo minfoB = world.get_molecule_info(Species("B"));
@@ -58,6 +59,7 @@ BOOST_AUTO_TEST_CASE(ModelTest)
     BOOST_CHECK_EQUAL(minfoB.D, 1e-12);
     BOOST_CHECK_EQUAL(minfoB.loc, "");
     BOOST_CHECK_EQUAL(minfoB.dimension, Shape::THREE);
+    BOOST_CHECK(!minfoB.is_structure);
 
     Species speciesC("C");
     speciesC.set_attribute<Integer>("dimension", 2);
@@ -71,6 +73,14 @@ BOOST_AUTO_TEST_CASE(ModelTest)
     BOOST_CHECK_EQUAL(minfoD.D, 1e-12);
     BOOST_CHECK_EQUAL(minfoD.loc, "C");
     BOOST_CHECK_EQUAL(minfoD.dimension, Shape::TWO);
+    BOOST_CHECK(!minfoD.is_structure);
+
+    MoleculeInfo minfoC = world.get_molecule_info(Species("C"));
+    BOOST_CHECK_EQUAL(minfoC.radius, VOXEL_RADIUS);
+    BOOST_CHECK_EQUAL(minfoC.D, 0.0);
+    BOOST_CHECK_EQUAL(minfoC.loc, "");
+    BOOST_CHECK_EQUAL(minfoC.dimension, Shape::TWO);
+    BOOST_CHECK(minfoC.is_structure);
 }
 
 BOOST_AUTO_TEST_CASE(SpeciesTest)

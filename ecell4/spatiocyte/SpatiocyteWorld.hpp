@@ -34,9 +34,10 @@ struct MoleculeInfo
     Real D;
     std::string loc;
     Shape::dimension_kind dimension;
+    bool is_structure;
 
-    MoleculeInfo(Real r, Real d, const std::string& l, Shape::dimension_kind dim)
-        : radius(r), D(d), loc(l), dimension(dim) {}
+    MoleculeInfo(Real r, Real d, const std::string& l, Shape::dimension_kind dim, bool s)
+        : radius(r), D(d), loc(l), dimension(dim), is_structure(s) {}
 };
 
 class SpatiocyteWorld
@@ -642,7 +643,8 @@ protected:
                     radius,
                     D,
                     get_attribute_as<std::string>(sp, "location", ""),
-                    get_dimension_kind(sp)
+                    get_dimension_kind(sp),
+                    true
             );
         }
 
@@ -655,7 +657,8 @@ protected:
                         radius,
                         D,
                         location,
-                        get_molecule_info(Species(location)).dimension
+                        get_molecule_info(Species(location)).dimension,
+                        false
                 );
             }
         }
@@ -664,7 +667,8 @@ protected:
                 radius,
                 D,
                 "",
-                default_dimension
+                default_dimension,
+                false
         );
     }
 
