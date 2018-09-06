@@ -22,33 +22,32 @@ void ZerothOrderReactionEvent::fire_()
         i != rule_.products().end(); ++i)
     {
         const Species& sp(*i);
-        const MoleculeInfo info(world_->get_molecule_info(sp));
+        const Species location(world_->get_molecule_info(sp).loc);
 
-        if (boost::shared_ptr<VoxelPool> location = world_->find_voxel_pool(Species(info.loc)))
+        if (world_->num_voxels(location) > 0)
         {
-            if (location->size() == 0)
+            time_ += draw_dt();
+            return;
+        }
+
+        while(true)
+        {
+            const Voxel voxel(
+                    world_->coordinate2voxel(world_->rng()->uniform_int(0, world_->size()-1)));
+
+            if (voxel.get_voxel_pool()->species() != location)
             {
-                time_ =+ draw_dt();
-                return;
+                continue;
             }
 
-            while (true)
+            if (boost::optional<ParticleID> pid = world_->new_voxel(sp, voxel))
             {
-                const Voxel voxel(world_->coordinate2voxel(world_->rng()->uniform_int(0, world_->size()-1)));
-
-                if (voxel.get_voxel_pool() != location)
-                {
-                    continue;
-                }
-
-                if (boost::optional<ParticleID> pid = world_->new_voxel(sp, voxel))
-                {
-                    rinfo.add_product(ReactionInfo::Item(*pid, sp, voxel));
-                    break;
-                }
+                rinfo.add_product(ReactionInfo::Item(*pid, sp, voxel));
+                break;
             }
         }
     }
+
     push_reaction(std::make_pair(rule_, rinfo));
     time_ += draw_dt();
 }

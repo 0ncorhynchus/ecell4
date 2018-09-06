@@ -478,30 +478,6 @@ public:
         return std::make_pair(id_voxel_pair.first, id_voxel_pair.second.species);
     }
 
-    boost::shared_ptr<VoxelPool> find_voxel_pool(const Species& species)
-    {
-        for (space_container_type::iterator itr(spaces_.begin());
-             itr != spaces_.end(); ++itr)
-        {
-            if ((*itr)->has_species(species))
-                return (*itr)->find_voxel_pool(species);
-        }
-        // create VoxelPool TODO
-        return get_root()->find_voxel_pool(species);
-        // throw "No VoxelPool corresponding to a given Species is found";
-    }
-
-    boost::shared_ptr<const VoxelPool> find_voxel_pool(const Species& species) const
-    {
-        for (space_container_type::const_iterator itr(spaces_.begin());
-             itr != spaces_.end(); ++itr)
-        {
-            if ((*itr)->has_species(species))
-                return (*itr)->find_voxel_pool(species);
-        }
-        throw "No VoxelPool corresponding to a given Species is found";
-    }
-
     bool has_molecule_pool(const Species& species) const
     {
         for (space_container_type::const_iterator itr(spaces_.begin());
