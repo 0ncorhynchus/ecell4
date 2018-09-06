@@ -34,6 +34,9 @@ struct MoleculeInfo
     Real D;
     std::string loc;
     Shape::dimension_kind dimension;
+
+    MoleculeInfo(Real r, Real d, const std::string& l, Shape::dimension_kind dim)
+        : radius(r), D(d), loc(l), dimension(dim) {}
 };
 
 class SpatiocyteWorld
@@ -612,12 +615,7 @@ protected:
     inline Shape::dimension_kind
     get_dimension_kind(const Species& sp) const
     {
-        const std::string name("dimension");
-
-        if (!sp.has_attribute(name))
-            return Shape::THREE;
-
-        switch (sp.get_attribute_as<Integer>(name))
+        switch (sp.get_attribute_as<Integer>("dimension"))
         {
             case 1:
                 return Shape::ONE;
@@ -625,39 +623,49 @@ protected:
                 return Shape::TWO;
             case 3:
                 return Shape::THREE;
-            default:
-                return Shape::UNDEF;
         }
+
+        return Shape::UNDEF;
     }
 
     inline MoleculeInfo
     get_molecule_info_from_species(const Species& sp)
     {
+        const Shape::dimension_kind default_dimension(Shape::THREE);
+
         const Real radius = get_attribute_as<Real>(sp, "radius", voxel_radius());
         const Real D      = get_attribute_as<Real>(sp, "D",      0.0);
+
+        if (sp.has_attribute("dimension"))
+        {
+            return MoleculeInfo(
+                    radius,
+                    D,
+                    get_attribute_as<std::string>(sp, "location", ""),
+                    get_dimension_kind(sp)
+            );
+        }
 
         if (sp.has_attribute("location"))
         {
             const std::string location(sp.get_attribute_as<std::string>("location"));
             if (location != "")
             {
-                const MoleculeInfo info = {
-                    radius,
-                    D,
-                    location,
-                    get_molecule_info(Species(location)).dimension
-                };
-                return info;
+                return MoleculeInfo(
+                        radius,
+                        D,
+                        location,
+                        get_molecule_info(Species(location)).dimension
+                );
             }
         }
 
-        const MoleculeInfo info = {
-            radius,
-            D,
-            "",
-            get_dimension_kind(sp)
-        };
-        return info;
+        return MoleculeInfo(
+                radius,
+                D,
+                "",
+                default_dimension
+        );
     }
 
 public:
