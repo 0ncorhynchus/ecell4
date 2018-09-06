@@ -63,7 +63,7 @@ public:
     /*
      * VoxelSpace Traits
      */
-    std::pair<ParticleID, ParticleVoxel> get_voxel_at(const coordinate_type& coord) const;
+    std::pair<ParticleID, Species> get_voxel_at(const coordinate_type& coord) const;
     boost::shared_ptr<VoxelPool> get_voxel_pool_at(const coordinate_type& coord) const
     {
         return voxels_.at(coord);

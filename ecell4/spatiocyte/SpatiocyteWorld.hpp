@@ -473,9 +473,7 @@ public:
 
     std::pair<ParticleID, Species> get_voxel_at(const Voxel& voxel) const
     {
-        std::pair<ParticleID, ParticleVoxel> id_voxel_pair(
-                voxel.space.lock()->get_voxel_at(voxel.coordinate));
-        return std::make_pair(id_voxel_pair.first, id_voxel_pair.second.species);
+        return voxel.space.lock()->get_voxel_at(voxel.coordinate);
     }
 
     bool has_molecule_pool(const Species& species) const

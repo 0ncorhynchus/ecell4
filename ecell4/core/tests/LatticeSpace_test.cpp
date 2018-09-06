@@ -52,18 +52,18 @@ BOOST_AUTO_TEST_CASE(GetVoxel)
     const Integer coordinate(space.position2coordinate(position));
 
     {
-        std::pair<ParticleID, ParticleVoxel> voxel(space.get_voxel_at(coordinate));
+        std::pair<ParticleID, Species> voxel(space.get_voxel_at(coordinate));
         BOOST_CHECK_EQUAL(voxel.first, ParticleID());
-        BOOST_CHECK_EQUAL(voxel.second.species, space.vacant()->species());
+        BOOST_CHECK_EQUAL(voxel.second, space.vacant()->species());
     }
 
     ParticleID id(sidgen());
     BOOST_CHECK(space.update_voxel(id, ParticleVoxel(sp, coordinate, radius, D)));
 
     {
-        std::pair<ParticleID, ParticleVoxel> voxel(space.get_voxel_at(coordinate));
+        std::pair<ParticleID, Species> voxel(space.get_voxel_at(coordinate));
         BOOST_CHECK_EQUAL(voxel.first, id);
-        BOOST_CHECK_EQUAL(voxel.second.species, sp);
+        BOOST_CHECK_EQUAL(voxel.second, sp);
     }
 
     {

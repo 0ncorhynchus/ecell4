@@ -309,7 +309,7 @@ public:
     virtual std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels_exact(const Species& sp) const;
 
     boost::optional<ParticleVoxel> find_voxel(const ParticleID& pid) const;
-    virtual std::pair<ParticleID, ParticleVoxel> get_voxel_at(const coordinate_type& coord) const = 0;
+    virtual std::pair<ParticleID, Species> get_voxel_at(const coordinate_type& coord) const = 0;
 
     boost::shared_ptr<VoxelPool> find_voxel_pool(const Species& sp);
     boost::shared_ptr<const VoxelPool> find_voxel_pool(const Species& sp) const;
