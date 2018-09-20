@@ -306,10 +306,6 @@ protected:
 
     boost::shared_ptr<VoxelPool> get_voxel_pool(ParticleVoxel v);
 
-    void push_voxels(std::vector<std::pair<ParticleID, ParticleVoxel> >& voxels,
-                     const boost::shared_ptr<MoleculePool>& voxel_pool,
-                     const Species& species) const;
-
 protected:
 
     Real t_;

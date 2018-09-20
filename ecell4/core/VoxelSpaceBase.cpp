@@ -129,17 +129,27 @@ Integer VoxelSpaceBase::num_voxels() const
     return count;
 }
 
-void VoxelSpaceBase::push_voxels(std::vector<std::pair<ParticleID, ParticleVoxel> >& voxels,
-        const boost::shared_ptr<MoleculePool>& voxel_pool,
-        const Species& species) const
+inline void push_voxels(
+    std::vector<std::pair<ParticleID, ParticleVoxel> >& voxels,
+    const boost::shared_ptr<MoleculePool>& voxel_pool)
 {
     const std::string location_serial(get_location_serial(voxel_pool));
-    for (MoleculePool::const_iterator i(voxel_pool->begin()); i != voxel_pool->end(); ++i)
+
+    for (MoleculePool::const_iterator itr(voxel_pool->begin()); itr != voxel_pool->end(); ++itr)
+    {
         voxels.push_back(
-                std::make_pair(
-                    (*i).pid,
-                    ParticleVoxel(species, (*i).coordinate, voxel_pool->radius(),
-                        voxel_pool->D(), location_serial)));
+            std::make_pair(
+                itr->pid,
+                ParticleVoxel(
+                    voxel_pool->species(),
+                    itr->coordinate,
+                    voxel_pool->radius(),
+                    voxel_pool->D(),
+                    location_serial
+                )
+            )
+        );
+    }
 }
 
 std::vector<std::pair<ParticleID, ParticleVoxel> >
@@ -151,7 +161,7 @@ VoxelSpaceBase::list_voxels() const
          itr != molecule_pools_.end(); ++itr)
     {
         const boost::shared_ptr<MoleculePool>& vp((*itr).second);
-        push_voxels(retval, vp, vp->species());
+        push_voxels(retval, vp);
     }
 
     return retval;
@@ -166,7 +176,7 @@ VoxelSpaceBase::list_voxels(const Species& sp) const
     for (molecule_pool_map_type::const_iterator itr(molecule_pools_.begin());
             itr != molecule_pools_.end(); ++itr)
         if (sexp.match((*itr).first))
-            push_voxels(retval, (*itr).second, sp);
+            push_voxels(retval, (*itr).second);
 
     return retval;
 }
@@ -178,7 +188,7 @@ VoxelSpaceBase::list_voxels_exact(const Species& sp) const
 
     molecule_pool_map_type::const_iterator itr(molecule_pools_.find(sp));
     if (itr != molecule_pools_.end())
-        push_voxels(retval, (*itr).second, sp);
+        push_voxels(retval, (*itr).second);
     return retval;
 }
 
