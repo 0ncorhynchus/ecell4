@@ -19,7 +19,6 @@
 #include "VoxelPool.hpp"
 #include "VacantType.hpp"
 #include "ParticleVoxel.hpp"
-#include "Particle.hpp"
 
 namespace ecell4
 {
@@ -191,9 +190,9 @@ public:
                 || molecule_pools_.find(sp) != molecule_pools_.end());
     }
 
-    virtual Integer num_molecules(const Species& sp) const;
+    Integer num_molecules(const Species& sp) const;
 
-    virtual Integer num_molecules_exact(const Species& sp) const
+    Integer num_molecules_exact(const Species& sp) const
     {
         return num_voxels_exact(sp);
     }
@@ -208,64 +207,6 @@ public:
         return static_cast<Real>(num_molecules_exact(sp));
     }
 
-
-    /*
-     * ParticleSpace Traits
-     */
-    Integer num_particles() const
-    {
-        return num_voxels();
-    }
-
-    Integer num_particles(const Species& sp) const
-    {
-        return num_voxels(sp);
-    }
-
-    Integer num_particles_exact(const Species& sp) const
-    {
-        return num_voxels_exact(sp);
-    }
-
-    bool has_particle(const ParticleID& pid) const
-    {
-        return has_voxel(pid);
-    }
-
-    virtual
-    std::vector<std::pair<ParticleID, Particle> >
-    list_particles() const;
-
-    virtual
-    std::vector<std::pair<ParticleID, Particle> >
-    list_particles(const Species& sp) const;
-
-    virtual
-    std::vector<std::pair<ParticleID, Particle> >
-    list_particles_exact(const Species& sp) const;
-
-    virtual
-    std::pair<ParticleID, Particle>
-    get_particle(const ParticleID& pid) const
-    {
-        if (boost::optional<ParticleVoxel> v = find_voxel(pid))
-        {
-            ParticleVoxel voxel(v.get());
-            return std::make_pair(pid, Particle(
-                voxel.species, coordinate2position(voxel.coordinate), voxel.radius, voxel.D));
-        }
-        else
-        {
-            throw NotFound("");
-        }
-    }
-
-    virtual const Particle particle_at(const coordinate_type& coord) const = 0;
-
-    virtual bool remove_particle(const ParticleID& pid)
-    {
-        return remove_voxel(pid);
-    }
 
     /*
      * VoxelSpace Traits
@@ -304,9 +245,9 @@ public:
     Integer num_voxels(const Species& sp) const;
     Integer num_voxels() const;
 
-    virtual std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels() const;
-    virtual std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels(const Species& sp) const;
-    virtual std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels_exact(const Species& sp) const;
+    std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels() const;
+    std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels(const Species& sp) const;
+    std::vector<std::pair<ParticleID, ParticleVoxel> > list_voxels_exact(const Species& sp) const;
 
     boost::optional<ParticleVoxel> find_voxel(const ParticleID& pid) const;
     virtual std::pair<ParticleID, Species> get_voxel_at(const coordinate_type& coord) const = 0;

@@ -100,16 +100,6 @@ OffLatticeSpace::get_voxel_at(const coordinate_type& coord) const
 }
 
 // Same as LatticeSpaceVectorImpl
-const Particle OffLatticeSpace::particle_at(const coordinate_type& coord) const
-{
-    boost::shared_ptr<const VoxelPool> vp(voxels_.at(coord));
-    return Particle(
-        vp->species(),
-        coordinate2position(coord),
-        vp->radius(), vp->D());
-}
-
-// Same as LatticeSpaceVectorImpl
 bool OffLatticeSpace::update_voxel(const ParticleID& pid, ParticleVoxel v)
 {
     const coordinate_type& to_coord(v.coordinate);

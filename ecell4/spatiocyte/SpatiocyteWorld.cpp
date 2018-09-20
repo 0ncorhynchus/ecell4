@@ -59,6 +59,76 @@ void SpatiocyteWorld::set_value(const Species& sp, const Real value)
     }
 }
 
+inline Particle
+particle_from_particle_voxel(const SpatiocyteWorld::space_type &space, const ParticleVoxel &voxel)
+{
+    return Particle(
+        voxel.species,
+        space->coordinate2position(voxel.coordinate),
+        voxel.radius,
+        voxel.D
+    );
+}
+
+inline std::vector<std::pair<ParticleID, Particle> >
+voxels2particles(
+    const SpatiocyteWorld::space_type &space,
+    const std::vector<std::pair<ParticleID, ParticleVoxel> > voxels)
+{
+    std::vector<std::pair<ParticleID, Particle> > retval;
+    retval.reserve(voxels.size());
+    for (std::vector<std::pair<ParticleID, ParticleVoxel> >::const_iterator
+         itr(voxels.begin()); itr != voxels.end(); ++itr)
+    {
+        retval.push_back(
+            std::make_pair(itr->first, particle_from_particle_voxel(space, itr->second))
+        );
+    }
+    return retval;
+}
+
+std::vector<std::pair<ParticleID, Particle> >
+SpatiocyteWorld::list_particles() const
+{
+    std::vector<std::pair<ParticleID, Particle> > retval;
+    for (space_container_type::const_iterator space_itr(spaces_.begin());
+         space_itr != spaces_.end(); ++space_itr)
+    {
+        std::vector<std::pair<ParticleID, Particle> >
+            particles(voxels2particles(*space_itr, (*space_itr)->list_voxels()));
+        retval.insert(retval.end(), particles.begin(), particles.end());
+    }
+    return retval;
+}
+
+std::vector<std::pair<ParticleID, Particle> >
+SpatiocyteWorld::list_particles(const Species& sp) const
+{
+    std::vector<std::pair<ParticleID, Particle> > retval;
+    for (space_container_type::const_iterator space_itr(spaces_.begin());
+         space_itr != spaces_.end(); ++space_itr)
+    {
+        std::vector<std::pair<ParticleID, Particle> >
+            particles(voxels2particles(*space_itr, (*space_itr)->list_voxels(sp)));
+        retval.insert(retval.end(), particles.begin(), particles.end());
+    }
+    return retval;
+}
+
+std::vector<std::pair<ParticleID, Particle> >
+SpatiocyteWorld::list_particles_exact(const Species& sp) const
+{
+    std::vector<std::pair<ParticleID, Particle> > retval;
+    for (space_container_type::const_iterator space_itr(spaces_.begin());
+         space_itr != spaces_.end(); ++space_itr)
+    {
+        std::vector<std::pair<ParticleID, Particle> >
+            particles(voxels2particles(*space_itr, (*space_itr)->list_voxels_exact(sp)));
+        retval.insert(retval.end(), particles.begin(), particles.end());
+    }
+    return retval;
+}
+
 std::vector<std::pair<ParticleID, Particle> >
 SpatiocyteWorld::list_structure_particles() const
 {

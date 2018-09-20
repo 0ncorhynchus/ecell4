@@ -31,8 +31,6 @@ public:
     bool remove_voxel(const ParticleID& pid);
     bool remove_voxel(const coordinate_type& coord);
 
-    bool update_structure(const Particle& p);
-
     /*
      * for Simulator
      *
@@ -106,8 +104,6 @@ public:
         is_periodic_ = is_periodic;
         initialize_voxels(is_periodic_);
     }
-
-    const Particle particle_at(const coordinate_type& coord) const;
 
 protected:
 

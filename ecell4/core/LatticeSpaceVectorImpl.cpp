@@ -69,13 +69,6 @@ LatticeSpaceVectorImpl::get_voxel_at(const coordinate_type& coord) const
     return std::make_pair(vp->get_particle_id(coord), vp->species());
 }
 
-bool LatticeSpaceVectorImpl::update_structure(const Particle& p)
-{
-    //XXX: Particle does not have a location.
-    ParticleVoxel v(p.species(), position2coordinate(p.position()), p.radius(), p.D());
-    return update_voxel(ParticleID(), v);
-}
-
 /*
  * original methods
  */
@@ -474,17 +467,6 @@ LatticeSpaceVectorImpl::move_(
     voxels_.at(to) = from_vp;
 
     return std::pair<coordinate_type, bool>(to, true);
-}
-
-const Particle LatticeSpaceVectorImpl::particle_at(
-    const coordinate_type& coord) const
-{
-    boost::shared_ptr<const VoxelPool> vp(voxels_.at(coord));
-
-    return Particle(vp->species(),
-                    coordinate2position(coord),
-                    vp->radius(),
-                    vp->D());
 }
 
 /*
