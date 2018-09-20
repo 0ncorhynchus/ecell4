@@ -14,9 +14,6 @@ const Real calculate_dimensional_factor(
     const Species& speciesB,
     boost::shared_ptr<SpatiocyteWorld> world);
 
-const Real calculate_alpha(
-    const ReactionRule& rr, const boost::shared_ptr<SpatiocyteWorld>& world);
-
 } // spatiocyte
 
 } // ecell4

@@ -53,18 +53,6 @@ const Real calculate_dimensional_factor(
     throw NotSupported("The dimension of a structure must be two or three.");
 }
 
-const Real calculate_alpha(const ReactionRule& rr, const boost::shared_ptr<SpatiocyteWorld>& world)
-{
-    const ReactionRule::reactant_container_type& reactants(rr.reactants());
-
-    if (reactants.size() != 2)
-        return 1.0;
-
-    const Real factor(calculate_dimensional_factor(reactants.at(0), reactants.at(1), world));
-    const Real alpha(1.0 / (factor * rr.k()));
-    return alpha < 1.0 ? alpha : 1.0;
-}
-
 } // spatiocyte
 
 } // ecell4

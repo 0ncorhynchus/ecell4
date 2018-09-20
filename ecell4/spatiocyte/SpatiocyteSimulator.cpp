@@ -58,7 +58,9 @@ void SpatiocyteSimulator::update_alpha_map()
         if (reactants.size() != 2)
             continue;
 
-        const Real alpha(calculate_alpha(*itr, world_));
+        const Real factor(calculate_dimensional_factor(reactants.at(0), reactants.at(1), world_));
+        const Real alpha(std::min(1.0, 1.0/(factor * itr->k())));
+
         for (int i(0); i < 2; ++i) {
             const Species& sp(reactants.at(i));
             alpha_map_type::iterator map_itr(alpha_map_.find(sp));
