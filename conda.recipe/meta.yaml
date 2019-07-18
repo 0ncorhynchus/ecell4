@@ -15,10 +15,13 @@ source:
 
 requirements:
   build:
+    - {{ compiler('cxx') }}
+    - cmake
+
+  host:
     - python
     - setuptools
     - pybind11
-    - cmake
     - hdf5
     - gsl
     - boost
@@ -27,10 +30,7 @@ requirements:
   run:
     - libgcc-ng # [linux]
     - libstdcxx-ng # [linux]
-    - gsl
-    - hdf5
     - zlib
-    - python
     - notebook
     - ffmpeg # [osx]
     - vs2015_runtime  # [win]
