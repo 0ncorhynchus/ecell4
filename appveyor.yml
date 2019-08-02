@@ -13,7 +13,7 @@ init:
 - ps: $env:PATH = "C:\Miniconda$env:CONDA\;C:\Miniconda$env:CONDA\Scripts\;$env:PATH"
 
 install:
-- ps: |
+- cmd: |
     git submodule update -q --init --recursive
     conda config --set always_yes yes --set changeps1 no
     conda update -q conda
