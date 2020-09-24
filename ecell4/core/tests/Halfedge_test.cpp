@@ -11,6 +11,7 @@
 #include <ecell4/core/STLFileIO.hpp>
 #include <ecell4/core/RandomNumberGenerator.hpp>
 #include <boost/assign.hpp>
+#include <boost/make_shared.hpp>
 #include <utility>
 
 using ecell4::Real;
